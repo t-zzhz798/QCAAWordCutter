@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Timothy's Word Cleaner – Custom</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --card-bg: #ffffff;
+      --border-subtle: #e5e7eb;
+      --border-strong: #d1d5db;
+      --accent: #2563eb;
+      --accent-soft: #e0ecff;
+      --accent-soft-strong: #d0e2ff;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --chip-bg: #ecfdf3;
+      --chip-text: #15803d;
+      --danger-bg: #fef2f2;
+      --danger-border: #fecaca;
+      --danger-text: #b91c1c;
+      --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.10);
+      --radius-card: 14px;
+      --radius-pill: 999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text-main);
+    }
+
+    body {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      background: var(--card-bg);
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      padding: 20px 20px 18px;
+    }
+
+    .container-inner {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .col {
+      flex: 1 1 320px;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    .panel-title span.step {
+      width: 18px;
+      height: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #ffffff;
+      background: var(--accent);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      padding: 9px 11px;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      border-radius: 10px;
+      border: 1px solid var(--border-strong);
+      resize: vertical;
+      background: #ffffff;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 120ms ease-out, box-shadow 120ms ease-out;
+    }
+
+    textarea::placeholder {
+      color: #9ca3af;
+    }
+
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.20);
+    }
+
+    .options {
+      border-radius: 10px;
+      border: 1px solid var(--border-strong);
+      padding: 10px 11px 10px;
+      background: #f9fafb;
+      font-size: 0.8rem;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 4px 10px;
+      margin-bottom: 10px;
+    }
+
+    .options label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 7px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: background 120ms ease-out, color 120ms ease-out;
+    }
+
+    .options label:hover {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .options input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    button {
+      margin-top: 8px;
+      padding: 7px 14px;
+      border-radius: var(--radius-pill);
+      border: 1px solid transparent;
+      background-color: var(--accent);
+      color: #f9fafb;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      transition: background-color 120ms ease-out, box-shadow 120ms ease-out, transform 80ms ease-out;
+    }
+
+    button:hover {
+      background-color: #1d4ed8;
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.40);
+    }
+
+    button:active {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
+
+    #copyBtn {
+      margin-bottom: 6px;
+      padding-inline: 12px;
+      background-color: #16a34a;
+    }
+
+    #copyBtn:hover {
+      background-color: #15803d;
+      box-shadow: 0 6px 16px rgba(22, 163, 74, 0.35);
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+      font-size: 0.75rem;
+    }
+
+    .stats span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
+      background: #eef2ff;
+      color: #1e3a8a;
+      border: 1px solid #c7d2fe;
+    }
+
+    .stats span[data-type="filtered"] {
+      background: var(--chip-bg);
+      color: var(--chip-text);
+      border-color: #bbf7d0;
+    }
+
+    .stats-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.8;
+    }
+
+    .bottom {
+      margin-top: 18px;
+    }
+
+    .note {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .note strong {
+      color: #111827;
+      font-weight: 600;
+    }
+
+    .footer {
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .footer-right {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .footer-tag {
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-subtle);
+      background: #f9fafb;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 16px 10px;
+      }
+      .container {
+        padding: 16px 14px 14px;
+      }
+      textarea {
+        min-height: 180px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="container-inner">
+      <h1>Timothy's Word Cutter</h1>
+      <div class="subtitle">QCAA targetted word cutting for assignments</div>
+      <div class="row">
+        <div class="col">
+          <div class="panel-title">
+            <span class="step">1</span>
+            Paste your full response
+          </div>
+          <textarea id="inputText" placeholder="Paste your assignment text here..."></textarea>
+        </div>
+
+        <div class="col">
+          <div class="panel-title">
+            <span class="step">2</span>
+            Choose what to exclude
+          </div>
+
+          <div class="options">
+            <div class="options-grid">
+              <label>
+                <input type="checkbox" id="excludeNumbers" checked>
+                Exclude any numerical digits
+              </label>
+
+              <label>
+                <input type="checkbox" id="excludeUnits" checked>
+                Exclude units / variables
+              </label>
+
+              <label>
+                <input type="checkbox" id="excludeSymbols" checked>
+                Exclude symbols
+              </label>
+
+              <label>
+                <input type="checkbox" id="excludePageNumbers" checked>
+                Exclude page numbers
+              </label>
+
+              <label>
+                <input type="checkbox" id="excludeCitations" checked>
+                Exclude in-text citations
+              </label>
+
+              <label>
+                <input type="checkbox" id="excludeInlineFigureRefs">
+                Exclude inline figure references
+              </label>
+
+              <label>
+                <input type="checkbox" id="excludeFigureCaptions" checked>
+                Exclude captions
+              </label>
+
+              <label>
+                <input type="checkbox" id="excludeEquations" checked>
+                Exclude equations
+              </label>
+
+              <label>
+                <input type="checkbox" id="excludeQuotes">
+                Exclude quotations
+              </label>
+
+              <label>
+                <input type="checkbox" id="excludeTitle" checked>
+                Exclude title
+              </label>
+
+              <label>
+                <input type="checkbox" id="excludeContents" checked>
+                Exclude contents list
+              </label>
+
+              <label>
+                <input type="checkbox" id="excludeAbstract" checked>
+                Exclude Abstract 
+              </label>
+
+              <label>
+                <input type="checkbox" id="excludeReferences" checked>
+                Exclude Reference List / Bibliography
+              </label>
+
+              <label>
+                <input type="checkbox" id="excludeAppendices" checked>
+                Exclude Appendices
+              </label>
+
+            </div>
+
+            <button id="processBtn" type="button">Process text</button>
+
+            <div class="stats">
+              <span data-type="original">
+                <span class="stats-label">Original</span>
+                <strong id="originalCount">0</strong> words
+              </span>
+              <span data-type="filtered">
+                <span class="stats-label">Filtered</span>
+                <strong id="filteredCount">0</strong> words
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom">
+        <div class="panel-title">
+          <span class="step">3</span>
+          Cut text
+        </div>
+        <button id="copyBtn" type="button">Copy cut text</button>
+        <textarea id="outputText" readonly placeholder="Your cleaned assignment text will appear here..."></textarea>
+        <div class="note">
+          <strong>Note:</strong> This is an approximation of word count. Always do a final manual check before submitting. Hopefully you don't lose your mind...
+        </div>
+      </div>
+
+      <div class="footer">
+        <div>
+          <a href="https://www.qcaa.qld.edu.au/senior/certificates-and-qualifications/qce-qcia-handbook/8-school-assessment-policies/8.2-integrating-learning-assessment"
+             target="_blank" rel="noopener noreferrer">
+            Check QCAA Exclusions Rules Here
+          </a>
+        </div>
+        <div class="footer-right">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function $(id) { return document.getElementById(id); }
+
+    function countWords(text) {
+      if (!text) return 0;
+      const tokens = text.trim().split(/\s+/);
+      return tokens.filter(Boolean).length;
+    }
+
+    // Full-line captions like "Figure 1: ..." or "Table 3: ..."
+    function isFigureCaption(str) {
+      return /^(figure|fig\.|table|diagram)\s*\d*\s*:/i.test(str);
+    }
+
+    function isFigureCaptionLine(str) {
+      return isFigureCaption(str);
+    }
+
+    // Page numbers and simple page markers
+    function isPageNumber(str) {
+      if (/^page\s*\d+(\s*of\s*\d+)?$/i.test(str)) return true;
+      if (/^\d+$/.test(str)) return true;
+      if (/^\d+\/\d+$/.test(str)) return true;
+      if (/^[-\s]*\d+[-\s]*$/.test(str)) return true;
+      return false;
+    }
+
+    // "Short line" equations with '='
+    function isEquation(str) {
+      if (!/=/.test(str)) return false;
+      var lengthOk = str.length <= 80;
+      var wordsOk  = str.split(/\s+/).filter(Boolean).length <= 10;
+      return lengthOk || wordsOk;
+    }
+
+    function isShortEquationLine(str) {
+      return isEquation(str);
+    }
+
+    // Remove inline "Figure 3", "Fig. 2", "Table 4" references in running text
+    function removeInlineFigureRefs(text) {
+      return text.replace(/\b(Figure|Fig\.|Table)\s*\d+\b/g, " ");
+    }
+
+    function processText() {
+      var text = $("inputText").value || "";
+      $("originalCount").textContent = countWords(text);
+
+      var lines = text.split(/\r?\n/);
+      var kept = [];
+
+      var inRef = false;
+      var inApp = false;
+      var inAbs = false;
+      var inContents = false;
+
+      // Remove title (first line) if requested
+      if ($("excludeTitle").checked && lines.length > 0) {
+        lines[0] = "";
+      }
+
+      // ---- LINE-BASED FILTERING ----
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+        var trimmed = line.trim();
+
+        // References / Reference list / Bibliography
+        if (/^\s*(?:\d+(?:\.\d+)*)?\s*(references|reference\s+list|bibliography)\s*$/i.test(trimmed)) {
+          kept.push(line);
+          inRef = true;
+          continue;
+        }
+
+        // Appendix / Appendices
+        if (/^\s*(?:\d+(?:\.\d+)*)?\s*(appendix|appendices)\s*$/i.test(trimmed)) {
+          kept.push(line);
+          inApp = true;
+          continue;
+        }
+
+        // Abstract
+        if (/^\s*(?:\d+(?:\.\d+)*)?\s*abstract\s*$/i.test(trimmed)) {
+          kept.push(line);
+          inAbs = true;
+          continue;
+        }
+
+        // Contents / Table of contents
+        if (/^\s*(?:\d+(?:\.\d+)*)?\s*(contents|table\s+of\s+contents)\s*$/i.test(trimmed)) {
+          kept.push(line);
+          inContents = true;
+          continue;
+        }
+
+        // Skip content of sections that are excluded
+        if (inRef && $("excludeReferences").checked)      continue;
+        if (inApp && $("excludeAppendices").checked)      continue;
+        if (inAbs && $("excludeAbstract").checked)        continue;
+
+        if (inContents && $("excludeContents").checked) {
+          if (trimmed === "") {
+            inContents = false;
+            kept.push(line);
+          }
+          continue;
+        }
+
+        // Page numbers
+        if ($("excludePageNumbers").checked && isPageNumber(trimmed)) {
+          continue;
+        }
+
+        // Caption lines (Figure 1: ...)
+        if ($("excludeFigureCaptions").checked && isFigureCaptionLine(trimmed)) {
+          continue;
+        }
+
+        // Short equation lines
+        if ($("excludeEquations").checked && isShortEquationLine(trimmed)) {
+          continue;
+        }
+
+        kept.push(line);
+      }
+
+      text = kept.join("\n");
+
+      // ---- PROTECT (Figure 1)-STYLE REFERENCES BEFORE OTHER REMOVALS ----
+      var figPlaceholders = [];
+      text = text.replace(/\(\s*(Figure|Fig\.|Table)\s*\d+\s*\)/gi, function(match) {
+        var idx = figPlaceholders.length;
+        var key = "__FIGREF__" + String.fromCharCode(65 + (idx % 26)) + "__";
+        figPlaceholders.push({ key: key, value: match });
+        return key;
+      });
+
+      // ---- CITATIONS ----
+      if ($("excludeCitations").checked) {
+        text = text.replace(/\(((?!\s*(Figure|Fig\.|Table)\b)[^)]*?\d{1,4}[^)]*?)\)/gi, " ");
+        text = text.replace(/\(((?!\s*(Figure|Fig\.|Table)\b)[^)]*?n\.?\s*d\.?[^)]*?)\)/gi, " ");
+        text = text.replace(/\[[^\]]*?\d+[^\]]*?\]/g, " ");
+      }
+
+      // ---- EQUATIONS INSIDE BRACKETS ----
+      if ($("excludeEquations").checked) {
+        text = text.replace(/\(([^)]*=[^)]*?)\)/g, " ");
+        text = text.replace(/\[([^]]*=[^]]*?)\]/g, " ");
+      }
+
+      // ---- INLINE FIGURE/TABLE REFERENCES ----
+      if ($("excludeInlineFigureRefs").checked) {
+        text = removeInlineFigureRefs(text);
+      }
+
+      // ---- QUOTES BETWEEN " " OR ' ' ----
+      if ($("excludeQuotes").checked) {
+        // Double quotes on a single line
+        text = text.replace(/"[^"\n]*"/g, " ");
+        // Single quotes on a single line
+        text = text.replace(/'[^'\n]*'/g, " ");
+      }
+
+      // ---- TOKEN-LEVEL FILTERING ----
+      var parts = text.split(/(\s+)/);
+      var out   = [];
+
+      var unitTokens = [
+        "m","km","cm","mm","um","nm",
+        "s","ms","min","h","hr",
+        "kg","g","mg","ug","µg",
+        "mol","mmol",
+        "l","ml","kl",
+        "n","kn",
+        "j","kj",
+        "w","kw",
+        "v",
+        "pa","kpa","mpa",
+        "hz","khz","mhz",
+        "ohm","ω",
+        "c","k",
+        "b","c","d","e","f","g","h","i","j",
+        "k","l","m","n","p","q","r","s","t",
+        "u","v","w","x","y","z"
+      ];
+
+      for (var j = 0; j < parts.length; j++) {
+        var t = parts[j];
+
+        if (/^\s+$/.test(t)) {
+          out.push(t);
+          continue;
+        }
+
+        var alphaOnly = t.replace(/[^A-Za-z]/g, "");
+        var alphaLower = alphaOnly.toLowerCase();
+
+        if ($("excludeUnits").checked && alphaOnly.length > 0) {
+          if (alphaLower === "a") {
+            // keep 'a'
+          } else if (unitTokens.indexOf(alphaLower) !== -1) {
+            continue;
+          }
+        }
+
+        if ($("excludeNumbers").checked && /\d/.test(t)) {
+          continue;
+        }
+
+        if ($("excludeSymbols").checked && !/[A-Za-z]/.test(t)) {
+          continue;
+        }
+
+        out.push(t);
+      }
+
+      var cleaned = out.join("");
+
+      // ---- RESTORE (Figure 1)-STYLE REFERENCES ----
+      for (var k = 0; k < figPlaceholders.length; k++) {
+        var ph = figPlaceholders[k];
+        var re = new RegExp(ph.key, "g");
+        cleaned = cleaned.replace(re, ph.value);
+      }
+
+      cleaned = cleaned.replace(/[ \t]+/g, " ");
+      cleaned = cleaned.replace(/ \n/g, "\n");
+      cleaned = cleaned.replace(/\n{3,}/g, "\n\n");
+      cleaned = cleaned.replace(/^\s+|\s+$/g, "");
+
+      $("outputText").value = cleaned;
+      $("filteredCount").textContent = countWords(cleaned);
+    }
+
+    window.onload = function () {
+      $("processBtn").onclick = processText;
+      $("inputText").oninput  = processText;
+
+      $("copyBtn").onclick = function () {
+        var txt = $("outputText").value || "";
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(txt);
+        } else {
+          $("outputText").focus();
+          $("outputText").select();
+        }
+      };
+
+      processText();
+    };
+  </script>
+</body>
+</html>
